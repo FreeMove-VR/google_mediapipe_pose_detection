@@ -240,9 +240,10 @@ class _CameraViewState extends State<CameraView> {
     final camera = _cameras[_cameraIndex];
     _controller = CameraController(
       camera,
-      // Set to ResolutionPreset.high. Do NOT set it to ResolutionPreset.max because for some phones does NOT work.
+      // Set to ResolutionPreset.low for Android, higher settings on Android will lag.
       ResolutionPreset.low,
       enableAudio: false,
+      // ImageFormat MUST be nv21 for Android or else the library will not be able to process the image.
       imageFormatGroup: Platform.isAndroid
           ? ImageFormatGroup.nv21
           : ImageFormatGroup.bgra8888,

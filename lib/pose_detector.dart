@@ -8,16 +8,38 @@ import 'input_image.dart';
 
 /// A detector for performing body-pose estimation.
 class PoseDetector {
+
+  /// The method channel to pass through the frames to detect
   static const MethodChannel _channel =
       MethodChannel('google_mediapipe_pose_detection');
 
   /// The options for the pose detector.
   final PoseDetectorOptions options;
 
-  late final Stream<Map<String, dynamic>> eventStream =
+  /// The event channel the native platforms stream back live detection from
+  late final Stream<dynamic> _eventStream =
       const EventChannel("google_mediapipe_pose_detection_results")
           .receiveBroadcastStream()
-          .map((event) => Map<String, dynamic>.from(event));
+          .map((event) => List<dynamic>.from(event));
+
+  /// Allows listening of the results of the detection
+  /// from the inputted live stream frames.
+  StreamSubscription listenDetection(void Function(List<Pose> poses) onDetection) {
+    return _eventStream.listen((event) {
+
+      final List<Pose> poses = [];
+      for (final pose in event) {
+        final Map<PoseLandmarkType, PoseLandmark> landmarks = {};
+        for (final point in pose) {
+          final landmark = PoseLandmark.fromJson(point);
+          landmarks[landmark.type] = landmark;
+        }
+        poses.add(Pose(landmarks: landmarks));
+      }
+
+      onDetection(poses);
+  });
+  }
 
   /// Instance id.
   final id = DateTime.now().microsecondsSinceEpoch.toString();
@@ -32,28 +54,6 @@ class PoseDetector {
       'options': options.toJson(),
       'imageData': inputImage.toJson()
     });
-  }
-
-  Future<List<Pose>?> readResult() async {
-    final result =
-        await _channel.invokeMethod('readPoseDetection');
-
-    if (result == null)
-      {
-        return null;
-      }
-
-    final List<Pose> poses = [];
-    for (final pose in result) {
-      final Map<PoseLandmarkType, PoseLandmark> landmarks = {};
-      for (final point in pose) {
-        final landmark = PoseLandmark.fromJson(point);
-        landmarks[landmark.type] = landmark;
-      }
-      poses.add(Pose(landmarks: landmarks));
-    }
-
-    return poses;
   }
 
   /// Closes the detector and releases its resources.
@@ -102,18 +102,6 @@ class PoseDetectorOptions {
     // this.outputSegmentationMasks = false,
     // this.useNormalizedCoordinates = false,
   });
-
-  // Convert legacy names
-  // : model = (model == PoseDetectionModel.base)
-  //           ? PoseDetectionModel.full
-  //           : (model == PoseDetectionModel.accurate)
-  //               ? PoseDetectionModel.heavy
-  //               : mode,
-  //       mode = (mode == PoseDetectionRunningMode.single)
-  //           ? PoseDetectionRunningMode.image
-  //           : (mode == PoseDetectionRunningMode.stream)
-  //               ? PoseDetectionRunningMode.liveStream
-  //               : mode;
 
   /// Returns a json representation of an instance of [PoseDetectorOptions].
   Map<String, dynamic> toJson() => {

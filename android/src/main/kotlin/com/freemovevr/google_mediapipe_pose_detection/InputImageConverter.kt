@@ -6,19 +6,10 @@ import android.graphics.ImageFormat
 import android.graphics.Matrix
 import android.graphics.Rect
 import android.graphics.YuvImage
-import android.media.Image
-import android.renderscript.Allocation
-import android.renderscript.RenderScript
-import android.renderscript.ScriptIntrinsicYuvToRGB
-import android.util.Log
-import com.freemovevr.google_mediapipe_pose_detection.PoseDetector.Companion.TAG
 import com.google.mediapipe.framework.image.BitmapImageBuilder
-import com.google.mediapipe.framework.image.ByteBufferImageBuilder
 import com.google.mediapipe.framework.image.MPImage
-import com.google.mediapipe.framework.image.MPImage.IMAGE_FORMAT_NV21
 import io.flutter.plugin.common.MethodChannel
 import java.io.ByteArrayOutputStream
-import java.nio.ByteBuffer
 
 
 //Returns an [InputImage] from the image data received

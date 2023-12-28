@@ -21,21 +21,27 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
   final PoseDetector _poseDetector =
       PoseDetector(options: PoseDetectorOptions());
 
-  var firstTime = true;
-
   CustomPaint? _customPaint;
   String? _text;
   var _cameraLensDirection = CameraLensDirection.back;
 
   InputImage? currentImage;
 
-  var time = 0;
-  var frameCounter = 0;
-
   @override
   void dispose() async {
     _poseDetector.close();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Listen to the results the pose detector gets back and update when we
+    // receive a new pose
+    _poseDetector.listenDetection((poses) {
+      _processPose(poses);
+    });
   }
 
   @override
@@ -46,41 +52,15 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
       title: 'Pose Detector',
       customPaint: _customPaint,
       text: _text,
-      onImage: _updateFrame,
+      onImage: _processCurrentImage,
       initialCameraLensDirection: _cameraLensDirection,
       onCameraLensDirectionChanged: (value) => _cameraLensDirection = value,
     )));
   }
 
-  Future<void> _updateFrame(InputImage inputImage) async {
-
-    frameCounter++;
-    if (time != DateTime.now().second)
-    {
-      time = DateTime.now().second;
-      print("Frame Count: $frameCounter");
-      frameCounter = 0;
-    }
-
-
-    if(firstTime) {
-      _sendImage(inputImage);
-      firstTime = false;
-      return;
-    }
-
-    final result = await _poseDetector.readResult();
-
-    if (result != null) {
-      _processPose(result);
-      _sendImage(inputImage);
-    }
-  }
-
   Future<void> _processPose(List<Pose> poses) async {
     if (currentImage?.metadata?.size != null &&
         currentImage?.metadata?.rotation != null) {
-
       final painter = PosePainter(
         poses,
         currentImage!.metadata!.size,
@@ -94,8 +74,8 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
     }
   }
 
-  Future<void> _sendImage(InputImage inputImage) async {
+  void _processCurrentImage(InputImage inputImage) {
     currentImage = inputImage;
-    await _poseDetector.processImage(inputImage);
+    _poseDetector.processImage(inputImage);
   }
 }

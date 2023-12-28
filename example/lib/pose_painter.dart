@@ -35,19 +35,28 @@ class PosePainter extends CustomPainter {
       ..strokeWidth = 3.0
       ..color = Colors.blueAccent;
 
+    var horizontalSize = imageSize.width;
+    var verticalSize = imageSize.height;
+
+    if (rotation == InputImageRotation.rotation90deg || rotation == InputImageRotation.rotation270deg)
+      {
+        horizontalSize = imageSize.height;
+        verticalSize = imageSize.width;
+      }
+
     for (final pose in poses) {
       pose.landmarks.forEach((_, landmark) {
         canvas.drawCircle(
             Offset(
               translateX(
-                landmark.x * imageSize.width,
+                landmark.x * horizontalSize,
                 size,
                 imageSize,
                 rotation,
                 cameraLensDirection,
               ),
               translateY(
-                landmark.y * imageSize.height,
+                landmark.y * verticalSize,
                 size,
                 imageSize,
                 rotation,
@@ -65,14 +74,14 @@ class PosePainter extends CustomPainter {
         canvas.drawLine(
             Offset(
                 translateX(
-                  joint1.x * imageSize.width,
+                  joint1.x * horizontalSize,
                   size,
                   imageSize,
                   rotation,
                   cameraLensDirection,
                 ),
                 translateY(
-                  joint1.y * imageSize.height,
+                  joint1.y * verticalSize,
                   size,
                   imageSize,
                   rotation,
@@ -80,14 +89,14 @@ class PosePainter extends CustomPainter {
                 )),
             Offset(
                 translateX(
-                  joint2.x * imageSize.width,
+                  joint2.x * horizontalSize,
                   size,
                   imageSize,
                   rotation,
                   cameraLensDirection,
                 ),
                 translateY(
-                  joint2.y * imageSize.height,
+                  joint2.y * verticalSize,
                   size,
                   imageSize,
                   rotation,

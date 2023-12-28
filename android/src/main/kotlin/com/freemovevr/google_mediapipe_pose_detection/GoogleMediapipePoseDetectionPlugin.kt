@@ -22,6 +22,15 @@ class GoogleMediapipePoseDetectionPlugin: FlutterPlugin {
 
     resultChannel = EventChannel(flutterPluginBinding.binaryMessenger, "google_mediapipe_pose_detection_results")
     resultChannel!!.setStreamHandler(poseDetector)
+
+    // Create and start a new thread for live feed detection
+    val detectionThread = Thread {
+      while (true) {
+        poseDetector?.detectSavedImage()
+      }
+    }
+
+    detectionThread.start()
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {

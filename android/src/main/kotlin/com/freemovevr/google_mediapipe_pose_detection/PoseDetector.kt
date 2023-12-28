@@ -16,7 +16,6 @@ import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import org.jetbrains.annotations.NotNull
 
 
 class PoseDetector(
@@ -24,21 +23,27 @@ class PoseDetector(
     private val flutterPluginBinding: FlutterPlugin.FlutterPluginBinding
 ) : MethodCallHandler, EventChannel.StreamHandler {
 
+    // Event channel for sending live stream pose detection results back to Flutter
     private var eventSink: EventChannel.EventSink? = null
 
+    // Mediapipe's Pose Landmark task object
     private var poseLandmarker: PoseLandmarker? = null
 
+    // Internal check for if the poseLandmarker is currently processing an image
     private var isWorking = false
 
-    private var landmarkArrayHolder: MutableList<List<Map<String, Any>>>? = null
+    // The next image for the landmarker to detect
+    private var savedImage: MPImage? = null
 
-    private var frameCount = 0
-    private var frameTimer = 0L
-
+    /**
+     * Method for Flutter to interact with Kotlin by specifying what method it wants to invoke.
+     *
+     * @param call The contents received from Flutter
+     * @param result To be used to return a value
+     */
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
             START -> handleDetection(call, result)
-            READ -> readResult(result)
             CLOSE -> {
                 closeDetector()
                 result.success(null)
@@ -48,32 +53,31 @@ class PoseDetector(
         }
     }
 
-    private fun readResult(result: MethodChannel.Result) {
-        val landmarkArray = landmarkArrayHolder
-
-        landmarkArrayHolder = null
-
-        result.success(landmarkArray)
-    }
-
+    /**
+     * Check if the landmarker has been created yet, and if not, create it.
+     * If call specifies this detection as a single image, process the image.
+     * If it is a live stream, save the image at savedImage for detectSavedImage() to process when
+     * the landmarker is available. Override the existing savedImage if one already exists
+     *
+     *
+     * @param call The contents received from Flutter
+     * @param result To be used to return a value
+     */
     private fun handleDetection(call: MethodCall, result: MethodChannel.Result) {
+
+        // Convert the image now so we do not slow down detectSavedImage() and the detectionThread
         val imageData = call.argument<Any>("imageData") as Map<*, *>
         val inputImage: MPImage = getInputImageFromData(
             imageData,
             result
         ) ?: return
 
-        if (isWorking) {
-            result.success(null)
-            return
-        }
-
+        // If pose detector is null, try to set it up
         val options = call.argument<Map<String, Any>>("options")
         if (options == null) {
             result.error("PoseDetectorError", "Invalid options", null)
             return
         }
-        // If pose detector is null, try to set it up
         poseLandmarker = poseLandmarker ?: setupPoseLandmarker(options)
 
         // If it is still null, we cannot detect the poses
@@ -82,23 +86,53 @@ class PoseDetector(
             return
         }
 
-        isWorking = true
         when (options["mode"] as String?) {
+            // If we are just processing one image, we can do that here and return the result
             RUNNING_MODE_IMAGE -> {
+                isWorking = true
                 poseLandmarker?.detect(inputImage)?.also { landmarkResult ->
-                    sendPoseData(landmarkResult)
+
+                    val convertedLandmarkResult: MutableList<List<Map<String, Any>>> = convertPoseData(landmarkResult)
+
+                    isWorking = false
+
+                    result.success(convertedLandmarkResult)
                 }
             }
 
+            // If we have livestream data, just save the image for the detectionThread
             RUNNING_MODE_LIVESTREAM -> {
-                val frameTime = SystemClock.uptimeMillis()
 
-                poseLandmarker!!.detectAsync(inputImage, frameTime)
+                savedImage = inputImage
             }
         }
+        // We must always end by calling result.
+        // If we have gotten here we do not need to do anything more,
+        // so just return successfully with nothing.
         result.success(null)
     }
 
+    /**
+     * If the poseLandmarker is not currently processing an image, detect the current savedImage
+     * and set savedImage to null
+     */
+    fun detectSavedImage()
+    {
+        if(!isWorking && savedImage != null)
+        {
+            isWorking = true
+
+            val frameTime = SystemClock.uptimeMillis()
+            poseLandmarker!!.detectAsync(savedImage, frameTime)
+            savedImage = null
+        }
+    }
+
+    /**
+     * Attempts to set up a poseLandmarker with the settings provided.
+     *
+     * @param options a map of how to set up the pose landmarker
+     */
     private fun setupPoseLandmarker(options: Map<String, Any>): PoseLandmarker? {
         // Set general pose landmarker options
         val baseOptionBuilder = BaseOptions.builder()
@@ -187,16 +221,32 @@ class PoseDetector(
         return null
     }
 
-    // Return the landmark result to this PoseLandmarkerHelper's caller
+    /**
+     * The callback the poseLandmarker makes after
+     * successfully processing an image from a livestream.
+     * Required function for Mediapipe, SHOULD NOT be used directly.
+     * Once called, the results are sent back to Flutter through the event channel.
+     */
     private fun returnLivestreamResult(
         result: PoseLandmarkerResult,
         image: MPImage
     ) {
-        sendPoseData(result)
+        isWorking = false
+
+        val landmarkList: MutableList<List<Map<String, Any>>> = convertPoseData(result)
+
+        // Flutter requires the event channel to be called on the UI thread
+        Handler(Looper.getMainLooper()).post {
+            eventSink?.success(landmarkList)
+        }
     }
 
-    // Return errors thrown during detection to this PoseLandmarkerHelper's
-    // caller
+    /**
+     * The callback the poseLandmarker makes after
+     * unsuccessfully processing an image from a livestream.
+     * Required function for Mediapipe, SHOULD NOT be used directly.
+     * If we get an error, just try to log it.
+     */
     private fun returnLivestreamError(error: RuntimeException) {
         Log.e(
             TAG,
@@ -204,7 +254,11 @@ class PoseDetector(
         )
     }
 
-    private fun sendPoseData(poseLandmarkerResult: PoseLandmarkerResult) {
+    /**
+     * Takes in the results from the poseLandmarker,
+     * and converts it to be readable for Flutter's supported platform channel data types
+     */
+    private fun convertPoseData(poseLandmarkerResult: PoseLandmarkerResult): MutableList<List<Map<String, Any>>> {
 
         val landmarkArray: MutableList<List<Map<String, Any>>> =
             ArrayList()
@@ -226,21 +280,25 @@ class PoseDetector(
                 landmarkArray.add(landmarks)
             }
         }
-
-        isWorking = false
-        landmarkArrayHolder = landmarkArray
+        return landmarkArray
     }
 
+    /**
+     * Cleanup function.
+     */
     private fun closeDetector() {
         poseLandmarker?.close()
     }
 
     companion object {
+        // Logging tag
         const val TAG = "google_mediapipe_pose_detection"
+
+        // Calls Flutter can make to Android
         private const val START = "startPoseDetector"
-        private const val READ = "readPoseDetection"
         private const val CLOSE = "closePoseDetector"
 
+        // Configuration options for the pose landmarker
         const val DELEGATE_CPU = "CPU"
         const val DELEGATE_GPU = "GPU"
         const val RUNNING_MODE_IMAGE = "image"
@@ -250,10 +308,17 @@ class PoseDetector(
         const val MODEL_POSE_LANDMARKER_HEAVY = "heavy"
     }
 
+    /**
+     * Required method for StreamHandler.
+     * Sets up the eventSink to be used in relaying pose detection results back to Flutter
+     */
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         eventSink = events
     }
 
+    /**
+     * Required method for StreamHandler.
+     */
     override fun onCancel(arguments: Any?) {
         eventSink = null
     }
