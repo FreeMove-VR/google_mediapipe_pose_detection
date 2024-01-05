@@ -6,6 +6,9 @@ import 'package:google_mediapipe_pose_detection/input_image.dart';
 import 'detector_view.dart';
 import 'pose_painter.dart';
 
+// Pulled directly with minor edits from: https://github.com/flutter-ml/google_ml_kit_flutter/blob/develop/packages/example/lib/vision_detector_views/pose_detector_view.dart
+// The code from that project is under the MIT licence, please see mit_licence.md
+
 void main() {
   runApp(const PoseDetectorView());
 }
@@ -37,6 +40,7 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
   void initState() {
     super.initState();
 
+    //ADDED CODE
     // Listen to the results the pose detector gets back and update when we
     // receive a new pose
     _poseDetector.listenDetection((poses) {
@@ -58,6 +62,9 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
     )));
   }
 
+  // ADDED CODE
+  // We set up a listener so that when Mediapipe is done processing an image,
+  // we can do work here
   Future<void> _processPose(List<Pose> poses) async {
     if (currentImage?.metadata?.size != null &&
         currentImage?.metadata?.rotation != null) {
@@ -74,6 +81,8 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
     }
   }
 
+  // ADDED CODE
+  // OnImage now only sends the image to the library
   void _processCurrentImage(InputImage inputImage) {
     currentImage = inputImage;
     _poseDetector.processImage(inputImage);

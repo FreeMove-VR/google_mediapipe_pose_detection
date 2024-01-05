@@ -4,6 +4,9 @@ import 'dart:ui';
 import 'package:camera/camera.dart';
 import 'package:google_mediapipe_pose_detection/input_image.dart';
 
+// Pulled directly from: https://github.com/flutter-ml/google_ml_kit_flutter/blob/develop/packages/example/lib/vision_detector_views/painters/coordinates_translator.dart
+// The code from that project is under the MIT licence, please see mit_licence.md
+
 double translateX(
     double x,
     Size canvasSize,

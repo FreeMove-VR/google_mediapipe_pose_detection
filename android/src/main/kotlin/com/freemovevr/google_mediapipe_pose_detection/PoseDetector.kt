@@ -17,6 +17,12 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 
+// Parts of this code were adapted from both:
+// https://github.com/flutter-ml/google_ml_kit_flutter/blob/develop/packages/google_mlkit_pose_detection/android/src/main/java/com/google_mlkit_pose_detection/PoseDetector.java
+// Under the MIT licence, and
+//https://github.com/googlesamples/mediapipe/blob/main/examples/pose_landmarker/android/app/src/main/java/com/google/mediapipe/examples/poselandmarker/PoseLandmarkerHelper.kt
+// Under the Apache-2.0 license.
+// Please see mit_licence.md and apache_2_0_licence.md respectively
 
 class PoseDetector(
     private val context: Context,

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'input_image.dart';
 
 // Adapted from: https://github.com/flutter-ml/google_ml_kit_flutter/blob/master/packages/google_mlkit_pose_detection/lib/src/pose_detector.dart
+// The code from that project is under the MIT licence, please see mit_licence.md
 
 /// A detector for performing body-pose estimation.
 class PoseDetector {

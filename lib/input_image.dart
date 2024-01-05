@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 // Pulled directly from: https://github.com/flutter-ml/google_ml_kit_flutter/blob/master/packages/google_mlkit_commons/lib/src/input_image.dart
+// The code from that project is under the MIT licence, please see mit_licence.md
 
 /// Image format that ML Kit takes to process the image.
 class InputImage {

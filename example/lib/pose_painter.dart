@@ -5,6 +5,9 @@ import 'package:google_mediapipe_pose_detection/input_image.dart';
 
 import 'coordinates_translator.dart';
 
+// Pulled directly with minor edits from: https://github.com/flutter-ml/google_ml_kit_flutter/blob/develop/packages/example/lib/vision_detector_views/painters/pose_painter.dart
+// The code from that project is under the MIT licence, please see mit_licence.md
+
 class PosePainter extends CustomPainter {
   PosePainter(
       this.poses,
