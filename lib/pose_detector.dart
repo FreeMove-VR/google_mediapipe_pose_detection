@@ -227,9 +227,6 @@ class PoseLandmark {
   /// Gives z coordinate of landmark in image space.
   final double z;
 
-  /// Identical to presence. Exists for backwards compatibility.
-  final double likelihood;
-
   /// The likelihood of the landmark existing within the scene.
   final double presence;
 
@@ -242,7 +239,6 @@ class PoseLandmark {
     required this.x,
     required this.y,
     required this.z,
-    required this.likelihood,
     required this.presence,
     required this.visibility,
   });
@@ -254,7 +250,6 @@ class PoseLandmark {
       x: json['x'],
       y: json['y'],
       z: json['z'],
-      likelihood: json['presence'] ?? 0.0,
       presence: json['presence'] ?? 0.0,
       visibility: json['visibility'] ?? 0.0,
     );
