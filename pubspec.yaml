@@ -1,7 +1,7 @@
 name: google_mediapipe_pose_detection
 description: A new Flutter plugin project.
 version: 0.0.1
-homepage:
+homepage: https://github.com/FreeMove-VR/google_mediapipe_pose_detection
 
 environment:
   sdk: '>=3.0.6 <4.0.0'
