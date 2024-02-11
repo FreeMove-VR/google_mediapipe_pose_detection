@@ -98,7 +98,8 @@ class PoseDetector(
                 isWorking = true
                 poseLandmarker?.detect(inputImage)?.also { landmarkResult ->
 
-                    val convertedLandmarkResult: MutableList<List<Map<String, Any>>> = convertPoseData(landmarkResult)
+                    val convertedLandmarkResult: MutableList<List<Map<String, Any>>> =
+                        convertPoseData(landmarkResult)
 
                     isWorking = false
 
@@ -122,10 +123,8 @@ class PoseDetector(
      * If the poseLandmarker is not currently processing an image, detect the current savedImage
      * and set savedImage to null
      */
-    fun detectSavedImage()
-    {
-        if(!isWorking && savedImage != null)
-        {
+    fun detectSavedImage() {
+        if (!isWorking && savedImage != null) {
             isWorking = true
 
             val frameTime = SystemClock.uptimeMillis()
@@ -207,21 +206,12 @@ class PoseDetector(
         } catch (e: IllegalStateException) {
             Log.e(
                 TAG,
-                "Pose Landmarker failed to initialize. See error logs for details"
-            )
-            Log.e(
-                TAG, "MediaPipe failed to load the task with error: " + e.message
+                "Pose Landmarker failed to be created due to IllegalStateException error: " + e.message
             )
         } catch (e: RuntimeException) {
-            // This occurs if the model being used does not support GPU
             Log.e(
                 TAG,
-                "Pose Landmarker failed to initialize. This occurs if the model being used " +
-                        "does not support GPU."
-            )
-            Log.e(
-                TAG,
-                "Image classifier failed to load model with error: " + e.message
+                "Pose Landmarker failed to be created due to RuntimeException error: " + e.message
             )
         }
         return null
