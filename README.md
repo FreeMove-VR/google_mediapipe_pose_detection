@@ -7,9 +7,13 @@ the [google_ml_kit_flutter](https://github.com/flutter-ml/google_ml_kit_flutter/
 which is under the Apache-2.0 license. Please see mit_licence.md and apache_2_0_licence.md respectively.
 
 This project was initially meant to be a drop in replacement / upgrade for google_ml_kit_flutter. 
-Due to Mediapipe's technical differences from ML Kit, pose results are read from a stream in this plugin.
+Due to Mediapipe's technical differences from ML Kit, the following needed to be changed:
 
-There are some slight differences in the options to create the landmarker as well.
+- Pose results are read from a stream.
+- There are some slight differences in the options to create the landmarker.
+- Mediapipe cannot handle being minified. To fix this, do the following:
+  - In `example\android\app\build.gradle` add line 61 to your code, which specifies a proguard file.
+  - Add the `proguard-rules.pro` file alongside `example\android\app\build.gradle`. This will stop Mediapipe from minifying while keeping Flutter working.
 
 While Mediapipe v0.10.8 introduced pose detection on iOS, on Cocoapods, 
 MediaPipeTasksVision is still at v0.10.5. We will fix and merge the iOS branch to add iOS support 
