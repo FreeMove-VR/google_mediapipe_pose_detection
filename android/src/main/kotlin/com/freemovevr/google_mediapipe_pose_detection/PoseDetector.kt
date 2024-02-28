@@ -17,6 +17,12 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 
+// Parts of this code were adapted from both:
+// https://github.com/flutter-ml/google_ml_kit_flutter/blob/develop/packages/google_mlkit_pose_detection/android/src/main/java/com/google_mlkit_pose_detection/PoseDetector.java
+// Under the MIT licence, and
+//https://github.com/googlesamples/mediapipe/blob/main/examples/pose_landmarker/android/app/src/main/java/com/google/mediapipe/examples/poselandmarker/PoseLandmarkerHelper.kt
+// Under the Apache-2.0 license.
+// Please see mit_licence.md and apache_2_0_licence.md respectively
 
 class PoseDetector(
     private val context: Context,
@@ -92,7 +98,8 @@ class PoseDetector(
                 isWorking = true
                 poseLandmarker?.detect(inputImage)?.also { landmarkResult ->
 
-                    val convertedLandmarkResult: MutableList<List<Map<String, Any>>> = convertPoseData(landmarkResult)
+                    val convertedLandmarkResult: MutableList<List<Map<String, Any>>> =
+                        convertPoseData(landmarkResult)
 
                     isWorking = false
 
@@ -116,10 +123,8 @@ class PoseDetector(
      * If the poseLandmarker is not currently processing an image, detect the current savedImage
      * and set savedImage to null
      */
-    fun detectSavedImage()
-    {
-        if(!isWorking && savedImage != null)
-        {
+    fun detectSavedImage() {
+        if (!isWorking && savedImage != null) {
             isWorking = true
 
             val frameTime = SystemClock.uptimeMillis()
@@ -201,21 +206,12 @@ class PoseDetector(
         } catch (e: IllegalStateException) {
             Log.e(
                 TAG,
-                "Pose Landmarker failed to initialize. See error logs for details"
-            )
-            Log.e(
-                TAG, "MediaPipe failed to load the task with error: " + e.message
+                "Pose Landmarker failed to be created due to IllegalStateException error: " + e.message
             )
         } catch (e: RuntimeException) {
-            // This occurs if the model being used does not support GPU
             Log.e(
                 TAG,
-                "Pose Landmarker failed to initialize. This occurs if the model being used " +
-                        "does not support GPU."
-            )
-            Log.e(
-                TAG,
-                "Image classifier failed to load model with error: " + e.message
+                "Pose Landmarker failed to be created due to RuntimeException error: " + e.message
             )
         }
         return null

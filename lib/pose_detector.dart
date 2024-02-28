@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'input_image.dart';
 
 // Adapted from: https://github.com/flutter-ml/google_ml_kit_flutter/blob/master/packages/google_mlkit_pose_detection/lib/src/pose_detector.dart
+// The code from that project is under the MIT licence, please see mit_licence.md
 
 /// A detector for performing body-pose estimation.
 class PoseDetector {
@@ -226,9 +227,6 @@ class PoseLandmark {
   /// Gives z coordinate of landmark in image space.
   final double z;
 
-  /// Identical to presence. Exists for backwards compatibility.
-  final double likelihood;
-
   /// The likelihood of the landmark existing within the scene.
   final double presence;
 
@@ -241,7 +239,6 @@ class PoseLandmark {
     required this.x,
     required this.y,
     required this.z,
-    required this.likelihood,
     required this.presence,
     required this.visibility,
   });
@@ -253,7 +250,6 @@ class PoseLandmark {
       x: json['x'],
       y: json['y'],
       z: json['z'],
-      likelihood: json['presence'] ?? 0.0,
       presence: json['presence'] ?? 0.0,
       visibility: json['visibility'] ?? 0.0,
     );

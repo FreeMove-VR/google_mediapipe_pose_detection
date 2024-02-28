@@ -8,6 +8,9 @@ import 'package:image_picker/image_picker.dart';
 
 import 'utils.dart';
 
+// Pulled directly from: https://github.com/flutter-ml/google_ml_kit_flutter/blob/develop/packages/example/lib/vision_detector_views/gallery_view.dart
+// The code from that project is under the MIT licence, please see mit_licence.md
+
 class GalleryView extends StatefulWidget {
   GalleryView(
       {Key? key,

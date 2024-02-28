@@ -5,6 +5,9 @@ import 'camera_view.dart';
 import 'gallery_view.dart';
 import 'package:google_mediapipe_pose_detection/input_image.dart';
 
+// Pulled directly from: https://github.com/flutter-ml/google_ml_kit_flutter/blob/develop/packages/example/lib/vision_detector_views/detector_view.dart
+// The code from that project is under the MIT licence, please see mit_licence.md
+
 enum DetectorViewMode { liveFeed, gallery }
 
 class DetectorView extends StatefulWidget {
