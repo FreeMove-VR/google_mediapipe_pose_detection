@@ -1,19 +1,24 @@
+//
+//  GoogleMediapipePoseDetection.swift
+//  google_mediapipe_pose_detection
+//
+//  This file provides access to the library from Flutter.
+//
+//  Created by William Parker
+//
+
 import Flutter
 import UIKit
 
-public class GoogleMediapipePoseDetectionPlugin: NSObject, FlutterPlugin {
-  public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "google_mediapipe_pose_detection", binaryMessenger: registrar.messenger())
-    let instance = GoogleMediapipePoseDetectionPlugin()
-    registrar.addMethodCallDelegate(instance, channel: channel)
-  }
 
-  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    switch call.method {
-    case "getPlatformVersion":
-      result("iOS " + UIDevice.current.systemVersion)
-    default:
-      result(FlutterMethodNotImplemented)
+/// Entry point class for the plugin.
+public class GoogleMediapipePoseDetectionPlugin: NSObject, FlutterPlugin
+{
+    
+    /// Provies an entry point to use the pose detector plugin.
+    /// - Parameter registrar: Flutter's internal register for the plugin.
+    public static func register(with registrar: FlutterPluginRegistrar)
+    {
+        PoseDetector.register(with: registrar)
     }
-  }
 }

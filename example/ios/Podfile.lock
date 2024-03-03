@@ -1,0 +1,58 @@
+PODS:
+  - camera_avfoundation (0.0.1):
+    - Flutter
+  - Flutter (1.0.0)
+  - google_mediapipe_pose_detection (0.0.1):
+    - Flutter
+    - MediaPipeTasksVision
+  - image_picker_ios (0.0.1):
+    - Flutter
+  - integration_test (0.0.1):
+    - Flutter
+  - MediaPipeTasksCommon (0.10.10)
+  - MediaPipeTasksVision (0.10.10):
+    - MediaPipeTasksCommon (= 0.10.10)
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+
+DEPENDENCIES:
+  - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
+  - Flutter (from `Flutter`)
+  - google_mediapipe_pose_detection (from `.symlinks/plugins/google_mediapipe_pose_detection/ios`)
+  - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
+  - integration_test (from `.symlinks/plugins/integration_test/ios`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+
+SPEC REPOS:
+  trunk:
+    - MediaPipeTasksCommon
+    - MediaPipeTasksVision
+
+EXTERNAL SOURCES:
+  camera_avfoundation:
+    :path: ".symlinks/plugins/camera_avfoundation/ios"
+  Flutter:
+    :path: Flutter
+  google_mediapipe_pose_detection:
+    :path: ".symlinks/plugins/google_mediapipe_pose_detection/ios"
+  image_picker_ios:
+    :path: ".symlinks/plugins/image_picker_ios/ios"
+  integration_test:
+    :path: ".symlinks/plugins/integration_test/ios"
+  path_provider_foundation:
+    :path: ".symlinks/plugins/path_provider_foundation/darwin"
+
+SPEC CHECKSUMS:
+  camera_avfoundation: 759172d1a77ae7be0de08fc104cfb79738b8a59e
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  google_mediapipe_pose_detection: 6f6afeff183eaccf04bf5ac7e608769fd8d737fc
+  image_picker_ios: 99dfe1854b4fa34d0364e74a78448a0151025425
+  integration_test: 13825b8a9334a850581300559b8839134b124670
+  MediaPipeTasksCommon: 7b04f2a6d2e5df5ed0b2eaa62d3c7779330881db
+  MediaPipeTasksVision: 2d7a9cadac8d49e849e84aaf33d953a264f2c29c
+  path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
+
+PODFILE CHECKSUM: 819463e6a0290f5a72f145ba7cde16e8b6ef0796
+
+COCOAPODS: 1.15.2
