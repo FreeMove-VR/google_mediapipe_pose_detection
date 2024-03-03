@@ -45,6 +45,7 @@ flutter:
   assets:
     - assets/pose_landmarker_full.task
     - assets/pose_landmarker_heavy.task
+    - assets/pose_landmarker_lite.task
   #
   # For details regarding assets in packages, see
   # https://flutter.dev/assets-and-images/#from-packages

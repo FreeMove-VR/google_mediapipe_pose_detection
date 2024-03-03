@@ -118,7 +118,7 @@ class PoseDetectorOptions {
       };
 }
 
-// Specifies whether to use base or accurate pose model.
+// Specifies what delegate should be used for detection.
 enum PoseDetectionDelegate {
   /// Uses the CPU for processing poses.
   CPU,
@@ -127,7 +127,7 @@ enum PoseDetectionDelegate {
   GPU,
 }
 
-// Specifies whether to use base or accurate pose model.
+// Specifies what version of the model to use.
 enum PoseDetectionModel {
   /// Very fast model with low accuracy. Best for very old devices.
   lite,
@@ -138,29 +138,15 @@ enum PoseDetectionModel {
 
   /// Slower model with high accuracy. Best when detection can be done slowly.
   heavy,
-
-  /// Deprecated model, defaults to Full
-  base,
-
-  /// Deprecated model, defaults to heavy
-  accurate,
 }
 
 /// The mode for the pose detector.
 enum PoseDetectionRunningMode {
-  /// Known as Image in Mediapipe.
-  /// The mode for recognizing pose landmarks on single image inputs.
-  single,
-
-  /// The mode for recognizing pose landmarks on single image inputs.
+  /// The mode for recognizing pose landmarks on single image inputs. NOTE: UNTESTED
   image,
 
   // NOT IMPLEMENTED: The mode for recognizing pose landmarks on the decoded frames of a video.
   // video,
-
-  /// Known as Live Stream in Mediapipe. The mode for recognizing pose
-  /// landmarks on a live stream of input data, such as from camera.
-  stream,
 
   /// The mode for recognizing pose landmarks on a live stream of input data,
   /// such as from camera.
