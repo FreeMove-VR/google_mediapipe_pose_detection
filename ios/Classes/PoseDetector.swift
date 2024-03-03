@@ -132,7 +132,14 @@ public class PoseDetector: NSObject, FlutterPlugin, FlutterStreamHandler
             do
             {
                 let frameTime = Int(CACurrentMediaTime() * 1000)
-                try poseLandmarker?.detectAsync(image:savedImage!, timestampInMilliseconds: frameTime)
+                if let image = savedImage
+                {
+                    try poseLandmarker?.detectAsync(image: image, timestampInMilliseconds: frameTime)
+                }
+                else
+                {
+                    isWorking = false
+                }
                 savedImage = nil
             }
             catch
