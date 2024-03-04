@@ -157,10 +157,9 @@ class InputImageConverter
             result(FlutterError(code: "INVALID_ARGUMENTS", message: "Failed to create CGImage from CIImage", details: nil))
             return nil
         }
-        let uiImage = UIImage(cgImage: videoImage)
         do
         {
-            let visionImage = try MPImage(uiImage: uiImage)
+            let visionImage = try MPImage(uiImage: UIImage(cgImage: videoImage))
             return visionImage
         }
         catch
