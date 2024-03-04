@@ -24,6 +24,10 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
   final PoseDetector _poseDetector =
       PoseDetector(options: PoseDetectorOptions());
 
+  var _fps = 0;
+  var _workingFps = 0;
+  var _currentTime = 0;
+
   CustomPaint? _customPaint;
   String? _text;
   var _cameraLensDirection = CameraLensDirection.back;
@@ -51,15 +55,32 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: Scaffold(
-            body: DetectorView(
-      title: 'Pose Detector',
-      customPaint: _customPaint,
-      text: _text,
-      onImage: _processCurrentImage,
-      initialCameraLensDirection: _cameraLensDirection,
-      onCameraLensDirectionChanged: (value) => _cameraLensDirection = value,
-    )));
+      home: Scaffold(
+        body: Stack(
+          children: <Widget>[
+            DetectorView(
+              title: 'Pose Detector',
+              customPaint: _customPaint,
+              text: _text,
+              onImage: _processCurrentImage,
+              initialCameraLensDirection: _cameraLensDirection,
+              onCameraLensDirectionChanged: (value) =>
+                  _cameraLensDirection = value,
+            ),
+        Positioned(
+          top: 20.0,
+          left: 10.0,
+            child: Text(_fps.toString(),
+              style: const TextStyle(
+                color: Colors.blue,
+                fontSize: 20,
+              ),
+            ),
+        ),
+          ],
+        ),
+      ),
+    );
   }
 
   // ADDED CODE
@@ -84,6 +105,18 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
   // ADDED CODE
   // OnImage now only sends the image to the library
   void _processCurrentImage(InputImage inputImage) {
+    DateTime now = DateTime.now();
+    int seconds = now.millisecondsSinceEpoch ~/ 1000;
+
+    if (_currentTime != seconds) {
+      _currentTime = seconds;
+      _fps = _workingFps;
+      _workingFps = 0;
+      setState(() {});
+    } else {
+      _workingFps += 1;
+    }
+
     currentImage = inputImage;
     _poseDetector.processImage(inputImage);
   }
