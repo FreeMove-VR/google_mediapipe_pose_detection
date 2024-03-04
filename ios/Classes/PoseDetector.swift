@@ -23,7 +23,7 @@ public class PoseDetector: NSObject, FlutterPlugin, FlutterStreamHandler
     var poseLandmarker: PoseLandmarker?
     
     /// A buffer to hold the most recent image. Useful for if the `poseLandmarker` is still working on the previous image.
-    var savedImage: MPImage?
+    weak var savedImage: MPImage?
     
     /// Flag for if the pose detector is currently working on proccessing an image into landmark data.
     var isWorking = false
