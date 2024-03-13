@@ -23,7 +23,7 @@ public class PoseDetector: NSObject, FlutterPlugin, FlutterStreamHandler
     var poseLandmarker: PoseLandmarker?
     
     /// A buffer to hold the most recent image. Useful for if the `poseLandmarker` is still working on the previous image.
-    weak var savedImage: MPImage?
+    var savedImage: MPImage?
     
     /// Flag for if the pose detector is currently working on proccessing an image into landmark data.
     var isWorking = false
@@ -41,14 +41,6 @@ public class PoseDetector: NSObject, FlutterPlugin, FlutterStreamHandler
         
         let eventChannel = FlutterEventChannel(name: "google_mediapipe_pose_detection_results", binaryMessenger: registrar.messenger())
         eventChannel.setStreamHandler(poseDetector)
-        
-        DispatchQueue.global().async
-        {
-            while(true)
-            {
-                poseDetector.detectSavedImage()
-            }
-        }
     }
     
     /// Handles incoming calls from Flutter.
@@ -119,6 +111,9 @@ public class PoseDetector: NSObject, FlutterPlugin, FlutterStreamHandler
         else if mode == "liveStream"
         {
             savedImage = mpImage
+            DispatchQueue.global().async {
+                self.detectSavedImage()
+            }
         }
         
     }
@@ -131,10 +126,9 @@ public class PoseDetector: NSObject, FlutterPlugin, FlutterStreamHandler
             isWorking = true
             do
             {
-                let frameTime = Int(CACurrentMediaTime() * 1000)
                 if let image = savedImage
                 {
-                    try poseLandmarker?.detectAsync(image: image, timestampInMilliseconds: frameTime)
+                    try poseLandmarker?.detectAsync(image: image, timestampInMilliseconds: Int(CACurrentMediaTime() * 1000))
                 }
                 else
                 {
@@ -301,6 +295,10 @@ extension PoseDetector: PoseLandmarkerLiveStreamDelegate
         if result != nil
         {
             let landmarkList: [[[String: Any]]] = PoseDetector.convertPoseData(poseLandmarkerResult: result!)
+            
+            DispatchQueue.global().async {
+                self.detectSavedImage()
+            }
             
             DispatchQueue.main.async
             {

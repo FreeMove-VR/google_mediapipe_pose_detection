@@ -9,9 +9,9 @@ PODS:
     - Flutter
   - integration_test (0.0.1):
     - Flutter
-  - MediaPipeTasksCommon (0.10.10)
-  - MediaPipeTasksVision (0.10.10):
-    - MediaPipeTasksCommon (= 0.10.10)
+  - MediaPipeTasksCommon (0.10.12)
+  - MediaPipeTasksVision (0.10.12):
+    - MediaPipeTasksCommon (= 0.10.12)
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -49,8 +49,8 @@ SPEC CHECKSUMS:
   google_mediapipe_pose_detection: 6f6afeff183eaccf04bf5ac7e608769fd8d737fc
   image_picker_ios: 99dfe1854b4fa34d0364e74a78448a0151025425
   integration_test: 13825b8a9334a850581300559b8839134b124670
-  MediaPipeTasksCommon: 7b04f2a6d2e5df5ed0b2eaa62d3c7779330881db
-  MediaPipeTasksVision: 2d7a9cadac8d49e849e84aaf33d953a264f2c29c
+  MediaPipeTasksCommon: 254e6bff77804b262f6ecf180477142ea551e802
+  MediaPipeTasksVision: 78d5c47cd7996b4d815bacba0a52dbf01458dfaf
   path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
 
 PODFILE CHECKSUM: 819463e6a0290f5a72f145ba7cde16e8b6ef0796
